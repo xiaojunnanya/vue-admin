@@ -8,6 +8,17 @@ export function login(data) {
   })
 }
 
+export function register(data) {
+  return request({
+    url: '/user/register',
+    method: 'post',
+    data: {
+      ...data,
+      checkPassword: data.password
+    }
+  })
+}
+
 export function getInfo(token) {
   return request({
     url: '/vue-element-admin/user/info',

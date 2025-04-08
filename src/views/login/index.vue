@@ -47,15 +47,19 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin" v-show="isLogin">
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin" v-if="isLogin">
         登录
       </el-button>
 
-      <div>
-        <el-button :loading="loading" style="width:100%;margin-bottom:30px;" @click.native.prevent="hadnleRegister">
+      <el-button :loading="loading" v-if="!isLogin" style="width:100%;margin-bottom:30px;" @click.native.prevent="hadnleRegister">
           注册
-        </el-button>
-      </div>
+      </el-button>
+
+      <div style="float:right;color:#fff;fontSize: 12px;cursor:pointer;"  @click="isLogin = !isLogin">{{ isLogin ? '没有账号？' : '已有账号？' }}</div>
+
+      <!-- <div>
+
+      </div> -->
 
     </el-form>
 
@@ -63,30 +67,32 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
 import { login, register } from '@/api/user'
+import { Message } from 'element-ui'
+import SparkMD5 from 'spark-md5'
+import { setToken } from '@/utils/auth'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (!value) {
+        callback(new Error('请输入用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码不能少于6位数字'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        email: '',
-        password: ''
+        email: 'hsy040506@163.com',
+        password: '12345678'
       },
       loginRules: {
         email: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -117,11 +123,7 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.email === '') {
-      this.$refs.email.focus()
-    } else if (this.loginForm.password === '') {
-      this.$refs.password.focus()
-    }
+
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
@@ -145,8 +147,16 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          login(this.loginForm)
-            .then(() => {
+
+          const password = SparkMD5.hash(this.loginForm.password + 'zhangshang')
+          const obj = {
+            email: this.loginForm.email,
+            password
+          }
+
+          login(obj)
+            .then((res) => {
+              setToken('token', res?.data?.token)
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
@@ -161,6 +171,32 @@ export default {
     },
     hadnleRegister() {
       this.isLogin = false
+
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+
+          const password = SparkMD5.hash(this.loginForm.password + 'zhangshang')
+          const obj = {
+            email: this.loginForm.email,
+            password
+          }
+
+          register(obj)
+            .then((res) => {
+              console.log(res, 'res')
+              this.loading = false
+              Message.success('注册成功请登录')
+              this.isLogin = true
+            })
+            .catch(() => {
+              this.loading = false
+            })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

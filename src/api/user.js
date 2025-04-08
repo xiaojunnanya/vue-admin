@@ -10,7 +10,7 @@ export function login(data) {
 
 export function register(data) {
   return request({
-    url: '/user/register',
+    url: '/user/registery',
     method: 'post',
     data: {
       ...data,
@@ -21,7 +21,7 @@ export function register(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/vue-element-admin/user/info',
+    url: '/user/currentUser',
     method: 'get',
     params: { token }
   })

@@ -7,13 +7,18 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout: 10000 // request timeout
 })
 
 // request interceptor
 service.interceptors.request.use(
   config => {
     // do something before request is sent
+
+    const userInfo = JSON.parse(window.localStorage.getItem('USER_INFO'))
+    if(userInfo && userInfo.token){
+      config.headers['token'] = `${userInfo.token}`
+    }
 
     if (store.getters.token) {
       // let each request carry token
@@ -45,8 +50,14 @@ service.interceptors.response.use(
   response => {
     const res = response.data
 
+    console.log(res, '1')
+
+    if(res?.data?.token){
+      window.localStorage.setItem('USER_INFO', JSON.stringify(res.data))
+    }
+
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    if (res.code !== 0) {
       Message({
         message: res.message || 'Error',
         type: 'error',

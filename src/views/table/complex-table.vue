@@ -8,6 +8,7 @@
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
+
       <el-button
         v-waves
         class="filter-item"
@@ -26,7 +27,7 @@
       >
         添加
       </el-button>
-      <el-button
+      <!-- <el-button
         v-waves
         :loading="downloadLoading"
         class="filter-item"
@@ -35,7 +36,7 @@
         @click="handleDownload"
       >
         导出
-      </el-button>
+      </el-button> -->
     </div>
 
     <el-table
@@ -51,6 +52,12 @@
       <el-table-column label="方案名称" min-width="150px">
         <template slot-scope="{ row }">
           <span class="link-type">{{ row.name }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="是否启用" width="120px">
+        <template slot-scope="{ row }">
+          <span>{{ row.status == 0 ? "暂停" : "启用" }}</span>
         </template>
       </el-table-column>
 
@@ -111,12 +118,32 @@
         <el-form-item label="方案名称" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
+        <el-form-item
+          label="状态"
+          prop="status"
+          v-show="dialogStatus === 'update'"
+        >
+          <el-select
+            v-model="temp.status"
+            class="filter-item"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in calendarTypeOptions"
+              :key="item.key"
+              :label="item.display_name"
+              :value="item.key"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false"> 取消 </el-button>
         <el-button
           type="primary"
-          @click="dialogStatus === 'create' ? createData() : updateData()"
+          @click="
+            dialogStatus === 'create' ? createData() : updateData(temp.id)
+          "
         >
           确定
         </el-button>
@@ -149,16 +176,15 @@ import {
   fetchPv,
   createArticle,
   updateArticle,
+  deleteArticle,
 } from "@/api/article";
 import waves from "@/directive/waves"; // waves directive
 import { parseTime } from "@/utils";
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
 
 const calendarTypeOptions = [
-  { key: "CN", display_name: "China" },
-  { key: "US", display_name: "USA" },
-  { key: "JP", display_name: "Japan" },
-  { key: "EU", display_name: "Eurozone" },
+  { key: 0, display_name: "暂停" },
+  { key: 1, display_name: "启用" },
 ];
 
 // arr to obj, such as { CN : "China", US : "USA" }
@@ -187,14 +213,14 @@ export default {
   data() {
     return {
       tableKey: 0,
-      list: null,
+      list: [],
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         importance: undefined,
-        name: undefined,
+        name: "",
         type: undefined,
         sort: "+id",
       },
@@ -213,7 +239,7 @@ export default {
         timestamp: new Date(),
         name: "",
         type: "",
-        status: "published",
+        status: 0,
       },
       dialogFormVisible: false,
       dialogStatus: "",
@@ -224,9 +250,6 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [
-          { required: true, message: "type is required", trigger: "change" },
-        ],
         timestamp: [
           {
             type: "date",
@@ -235,9 +258,7 @@ export default {
             trigger: "change",
           },
         ],
-        name: [
-          { required: true, message: "name is required", trigger: "blur" },
-        ],
+        name: [{ required: true, message: "请填写方案名称", trigger: "blur" }],
       },
       downloadLoading: false,
     };
@@ -248,9 +269,17 @@ export default {
   methods: {
     getList() {
       this.listLoading = true;
-      fetchList(this.listQuery).then((response) => {
-        this.list = response.data;
-        this.total = response.data.length;
+
+      fetchList({
+        name: this.listQuery.name,
+        current: this.listQuery.page,
+        pageSize: this.listQuery.limit,
+        sortOrder: "desc",
+        sortField: "createTime",
+      }).then((response) => {
+        this.list = response.data.records;
+
+        this.total = Number(response.data.total);
 
         this.listLoading = false;
       });
@@ -287,7 +316,7 @@ export default {
         // remark: "",
         // timestamp: new Date(),
         name: "",
-        // status: "published",
+        status: 0,
         // type: "",
       };
     },
@@ -302,7 +331,6 @@ export default {
     createData() {
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
-          console.log(this.temp, "1");
           createArticle({
             name: this.temp.name,
           }).then(() => {
@@ -327,12 +355,15 @@ export default {
         this.$refs["dataForm"].clearValidate();
       });
     },
-    updateData() {
+    updateData(id) {
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
-          updateArticle(tempData).then(() => {
-            const index = this.list.findIndex((v) => v.id === this.temp.id);
-            this.list.splice(index, 1, this.temp);
+          updateArticle({
+            id,
+            name: this.temp.name,
+            status: this.temp.status,
+          }).then(() => {
+            this.getList();
             this.dialogFormVisible = false;
             this.$notify({
               title: "成功",
@@ -345,13 +376,18 @@ export default {
       });
     },
     handleDelete(row, index) {
-      this.$notify({
-        title: "成功",
-        message: "删除成功",
-        type: "success",
-        duration: 2000,
+      deleteArticle({
+        id: row.id,
+      }).then(() => {
+        this.getList();
+        this.$notify({
+          title: "成功",
+          message: "删除成功",
+          type: "success",
+          duration: 2000,
+        });
+        this.list.splice(index, 1);
       });
-      this.list.splice(index, 1);
     },
     handleFetchPv(pv) {
       fetchPv(pv).then((response) => {

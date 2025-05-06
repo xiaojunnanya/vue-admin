@@ -1,14 +1,13 @@
 import request from "@/utils/request";
 
-// 获取方案列表
-export function fetchList(query) {
+/**
+ * 获取方案列表
+ */
+export function fetchList(data) {
   return request({
-    url: "/plan/list",
+    url: "/plan/listByPage",
     method: "post",
-    data: {
-      name: "",
-      status: 0,
-    },
+    data,
   });
 }
 
@@ -28,6 +27,11 @@ export function fetchPv(pv) {
   });
 }
 
+/**
+ * 创建
+ * @param {*} data
+ * @returns
+ */
 export function createArticle(data) {
   return request({
     url: "/plan/add",
@@ -35,10 +39,27 @@ export function createArticle(data) {
     data,
   });
 }
-
+/**
+ * 更新
+ * @param {*} data
+ * @returns
+ */
 export function updateArticle(data) {
   return request({
-    url: "/vue-element-admin/article/update",
+    url: "/plan/update",
+    method: "post",
+    data,
+  });
+}
+
+/**
+ * 删除
+ * @param {*} data
+ * @returns
+ */
+export function deleteArticle(data) {
+  return request({
+    url: "/plan/delete",
     method: "post",
     data,
   });

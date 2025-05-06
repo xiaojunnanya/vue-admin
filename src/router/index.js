@@ -1,55 +1,55 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
-Vue.use(Router)
+Vue.use(Router);
 
-import Layout from '@/layout'
+import Layout from "@/layout";
 export const constantRoutes = [
   {
-    path: '/redirect',
+    path: "/redirect",
     component: Layout,
     hidden: true,
     children: [
       {
-        path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index')
-      }
-    ]
+        path: "/redirect/:path(.*)",
+        component: () => import("@/views/redirect/index"),
+      },
+    ],
   },
   {
-    path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
+    path: "/login",
+    component: () => import("@/views/login/index"),
+    hidden: true,
   },
   {
-    path: '/auth-redirect',
-    component: () => import('@/views/login/auth-redirect'),
-    hidden: true
+    path: "/auth-redirect",
+    component: () => import("@/views/login/auth-redirect"),
+    hidden: true,
   },
   {
-    path: '/404',
-    component: () => import('@/views/error-page/404'),
-    hidden: true
+    path: "/404",
+    component: () => import("@/views/error-page/404"),
+    hidden: true,
   },
   {
-    path: '/401',
-    component: () => import('@/views/error-page/401'),
-    hidden: true
+    path: "/401",
+    component: () => import("@/views/error-page/401"),
+    hidden: true,
   },
   {
-    path: '/',
+    path: "/",
     component: Layout,
-    redirect: '/dashboard',
+    redirect: "/dashboard",
     children: [
       {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', affix: true }
-      }
-    ]
+        path: "dashboard",
+        component: () => import("@/views/dashboard/index"),
+        name: "Dashboard",
+        meta: { title: "dashboard", icon: "dashboard", affix: true },
+      },
+    ],
   },
-]
+];
 
 /**
  * asyncRoutes
@@ -57,36 +57,50 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/table',
-      component: Layout,
-      name: 'Table',
-      meta: {
-        title: 'Table',
-        icon: 'table'
+    path: "/",
+    component: Layout,
+    meta: {
+      icon: "table",
+    },
+    children: [
+      {
+        path: "complex-table",
+        component: () => import("@/views/table/complex-table"),
+        name: "ComplexTable",
+        meta: { title: "考核方案" },
       },
-      children: [
-        {
-          path: 'complex-table',
-          component: () => import('@/views/table/complex-table'),
-          name: 'ComplexTable',
-          meta: { title: '考核方案' }
-        }
-      ]
+    ],
   },
-  { path: '*', redirect: '/404', hidden: true }
-]
+  {
+    path: "/",
+    component: Layout,
+    meta: {
+      icon: "table",
+    },
+    children: [
+      {
+        path: "complex-project",
+        component: () => import("@/views/table/complex-project"),
+        name: "ComplexProject",
+        meta: { title: "考核项目" },
+      },
+    ],
+  },
+  { path: "*", redirect: "/404", hidden: true },
+];
 
-const createRouter = () => new Router({
-  mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+const createRouter = () =>
+  new Router({
+    mode: "history", // require service support
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes,
+  });
 
-const router = createRouter()
+const router = createRouter();
 
 export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  const newRouter = createRouter();
+  router.matcher = newRouter.matcher; // reset router
 }
 
-export default router
+export default router;

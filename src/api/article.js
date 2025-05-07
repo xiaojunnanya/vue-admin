@@ -64,3 +64,15 @@ export function deleteArticle(data) {
     data,
   });
 }
+
+/**
+ * 获取方案详情
+ */
+
+export function fetchDetail(id) {
+  return request({
+    url: "/plan/detail",
+    method: "get",
+    params: { planId: id },
+  });
+}

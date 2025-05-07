@@ -49,25 +49,42 @@
       style="width: 100%"
       @sort-change="sortChange"
     >
-      <el-table-column label="方案名称" min-width="150px">
+      <el-table-column
+        label="方案名称"
+        min-width="150px"
+      >
         <template slot-scope="{ row }">
-          <span class="link-type">{{ row.name }}</span>
+          <span
+            class="link-type"
+            @click="handleNameClick(row.id)"
+          >{{
+            row.name
+          }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="是否启用" width="120px">
+      <el-table-column
+        label="是否启用"
+        width="120px"
+      >
         <template slot-scope="{ row }">
           <span>{{ row.status == 0 ? "暂停" : "启用" }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="创建时间" width="200px">
+      <el-table-column
+        label="创建时间"
+        width="200px"
+      >
         <template slot-scope="{ row }">
           <span>{{ row.createTime }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="更新" width="200px">
+      <el-table-column
+        label="更新"
+        width="200px"
+      >
         <template slot-scope="{ row }">
           <span>{{ row.updateTime }}</span>
         </template>
@@ -80,7 +97,11 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleUpdate(row)"
+          >
             编辑
           </el-button>
           <el-button
@@ -115,13 +136,16 @@
         label-width="100px"
         style="width: 400px; margin-left: 50px"
       >
-        <el-form-item label="方案名称" prop="name">
+        <el-form-item
+          label="方案名称"
+          prop="name"
+        >
           <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item
+          v-show="dialogStatus === 'update'"
           label="状态"
           prop="status"
-          v-show="dialogStatus === 'update'"
         >
           <el-select
             v-model="temp.status"
@@ -137,8 +161,13 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false"> 取消 </el-button>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogFormVisible = false">
+          取消
+        </el-button>
         <el-button
           type="primary"
           @click="
@@ -150,7 +179,10 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
+    <el-dialog
+      :visible.sync="dialogPvVisible"
+      title="Reading statistics"
+    >
       <el-table
         :data="pvData"
         border
@@ -158,11 +190,23 @@
         highlight-current-row
         style="width: 100%"
       >
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
+        <el-table-column
+          prop="key"
+          label="Channel"
+        />
+        <el-table-column
+          prop="pv"
+          label="Pv"
+        />
       </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="dialogPvVisible = false"
+        >{{
           $t("table.confirm")
         }}</el-button>
       </span>
@@ -423,6 +467,12 @@ export default {
     getSortClass: function (key) {
       const sort = this.listQuery.sort;
       return sort === `+${key}` ? "ascending" : "descending";
+    },
+    handleNameClick(id) {
+      this.$router.push({
+        path: "/complex-project",
+        query: { id },
+      });
     },
   },
 };

@@ -3,11 +3,10 @@ import request from "@/utils/request";
 /**
  * 获取列表
  */
-export function fetchList(data) {
+export function fetchList() {
   return request({
-    url: "/plan/listByPage",
-    method: "post",
-    data,
+    url: "/department/list",
+    method: "get",
   });
 }
 
@@ -18,7 +17,7 @@ export function fetchList(data) {
  */
 export function createArticle(data) {
   return request({
-    url: "/plan/add",
+    url: "/department/add",
     method: "post",
     data,
   });
@@ -30,7 +29,7 @@ export function createArticle(data) {
  */
 export function updateArticle(data) {
   return request({
-    url: "/plan/update",
+    url: "/department/update",
     method: "post",
     data,
   });
@@ -43,20 +42,8 @@ export function updateArticle(data) {
  */
 export function deleteArticle(data) {
   return request({
-    url: "/plan/delete",
+    url: "/department/delete",
     method: "post",
     data,
-  });
-}
-
-/**
- * 获取详情
- */
-
-export function fetchDetail(id) {
-  return request({
-    url: "/plan/detail",
-    method: "get",
-    params: { planId: id },
   });
 }

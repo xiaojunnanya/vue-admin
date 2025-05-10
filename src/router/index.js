@@ -86,6 +86,66 @@ export const asyncRoutes = [
       },
     ],
   },
+  {
+    path: "/",
+    component: Layout,
+    meta: {
+      icon: "table",
+    },
+    children: [
+      {
+        path: "unit",
+        component: () => import("@/views/table/unit"),
+        name: "unit",
+        meta: { title: "单位" },
+      },
+    ],
+  },
+  {
+    path: "/",
+    component: Layout,
+    meta: {
+      icon: "chart",
+    },
+    children: [
+      {
+        path: "ranking",
+        component: () => import("@/views/table/ranking"),
+        name: "ranking",
+        meta: { title: "排行榜" },
+      },
+    ],
+  },
+  {
+    path: "/",
+    component: Layout,
+    meta: {
+      icon: "peoples",
+    },
+    children: [
+      {
+        path: "user",
+        component: () => import("@/views/table/user"),
+        name: "user",
+        meta: { title: "用户管理" },
+      },
+    ],
+  },
+  {
+    path: "/",
+    component: Layout,
+    meta: {
+      icon: "component",
+    },
+    children: [
+      {
+        path: "setting",
+        component: () => import("@/views/table/setting"),
+        name: "setting",
+        meta: { title: "设置" },
+      },
+    ],
+  },
   { path: "*", redirect: "/404", hidden: true },
 ];
 

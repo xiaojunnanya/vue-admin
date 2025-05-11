@@ -49,3 +49,12 @@ export function deleteArticle(data) {
     data,
   });
 }
+
+// 更新
+export function updateArticle(data) {
+  return request({
+    url: "/user/change",
+    method: "post",
+    data,
+  });
+}

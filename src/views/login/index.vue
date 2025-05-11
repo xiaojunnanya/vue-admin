@@ -29,6 +29,24 @@
         />
       </el-form-item>
 
+      <el-form-item prop="department" v-if="!isLogin">
+        <span class="svg-container">
+          <svg-icon icon-class="tree" />
+        </span>
+        <el-select
+          v-model="loginForm.department"
+          placeholder="请选择部门"
+          style="width: calc(100% - 30px)"
+        >
+          <el-option
+            v-for="item in departments"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-tooltip
         v-model="capsTooltip"
         content="Caps lock is On"
@@ -52,10 +70,7 @@
             @blur="capsTooltip = false"
             @keyup.enter.native="handleLogin"
           />
-          <span
-            class="show-pwd"
-            @click="showPwd"
-          >
+          <span class="show-pwd" @click="showPwd">
             <svg-icon
               :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
             />
@@ -97,6 +112,7 @@
 </template>
 
 <script>
+import { fetchList } from "@/api/unit";
 import { login, register } from "@/api/user";
 import { Message } from "element-ui";
 import SparkMD5 from "spark-md5";
@@ -123,13 +139,18 @@ export default {
       loginForm: {
         email: "hsy040506@163.com",
         password: "12345678",
+        department: "",
       },
+      departments: [],
       loginRules: {
         email: [
           { required: true, trigger: "blur", validator: validateUsername },
         ],
         password: [
           { required: true, trigger: "blur", validator: validatePassword },
+        ],
+        department: [
+          { required: true, trigger: "blur", message: "请选择部门" },
         ],
       },
       passwordType: "password",
@@ -154,7 +175,14 @@ export default {
     },
   },
   created() {
-    // window.addEventListener('storage', this.afterQRScan)
+    fetchList().then((res) => {
+      this.departments = res.data.map((item) => {
+        return {
+          value: item.id,
+          label: item.name,
+        };
+      });
+    });
   },
   mounted() {},
   destroyed() {
@@ -195,13 +223,13 @@ export default {
                 path: this.redirect || "/",
                 query: this.otherQuery,
               });
+
               this.loading = false;
             })
             .catch(() => {
               this.loading = false;
             });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -213,26 +241,22 @@ export default {
         if (valid) {
           this.loading = true;
 
-          const password = SparkMD5.hash(
-            this.loginForm.password + "zhangshang"
-          );
           const obj = {
             email: this.loginForm.email,
-            password,
+            departmentId: this.loginForm.department,
+            password: this.loginForm.password,
           };
 
           register(obj)
-            .then((res) => {
-              console.log(res, "res");
+            .then(() => {
               this.loading = false;
-              Message.success("注册成功请登录");
+              Message.success("注册成功，请联系管理员激活账号");
               this.isLogin = true;
             })
             .catch(() => {
               this.loading = false;
             });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });

@@ -10,45 +10,34 @@
       style="width: 100%"
       @sort-change="sortChange"
     >
-      <el-table-column
-        label="用户名"
-        min-width="150px"
-      >
+      <el-table-column label="用户名" min-width="150px">
         <template slot-scope="{ row }">
           <span class="link-type">{{ row.username }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        label="单位名称"
-        width="200px"
-      >
+      <el-table-column label="单位名称" width="200px">
         <template slot-scope="{ row }">
           <span v-if="row.department">{{ row.department.name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        label="邮箱"
-        width="200px"
-      >
+      <el-table-column label="邮箱" width="200px">
         <template slot-scope="{ row }">
           <span>{{ row.email }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        label="角色"
-        width="200px"
-      >
+      <el-table-column label="角色" width="200px">
         <template slot-scope="{ row }">
-          <span>{{ row.userRole }}</span>
+          <span v-if="row.userRole === 'admin'">管理员</span>
+          <span v-else>{{ row.userRole === 'user' ? '普通用户' : '禁用' }}</span>
         </template>
       </el-table-column>
 
       <!-- <el-table-column label="状态" width="120px">
         <template slot-scope="{ row }">
-          <span>{{ row.isDelete == 0 ? "启用" : "暂用" }}</span>
+          <span>{{ row.status }}</span>
         </template>
       </el-table-column> -->
 
@@ -65,11 +54,7 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleUpdate(row)"
-          >
+          <el-button type="primary" size="mini" @click="handleUpdate(row)" :disabled="row.userRole === 'admin'">
             编辑
           </el-button>
           <el-button
@@ -77,6 +62,7 @@
             size="mini"
             type="danger"
             @click="handleDelete(row, $index)"
+             :disabled="row.userRole === 'admin'"
           >
             删除
           </el-button>
@@ -104,12 +90,29 @@
         label-width="100px"
         style="width: 400px; margin-left: 50px"
       >
-        <el-form-item
-          label="方案名称"
-          prop="name"
-        >
-          <el-input v-model="temp.name" />
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="temp.username" />
         </el-form-item>
+        <el-form-item label="单位名称" prop="department">
+          <el-select v-model="temp.department.id" placeholder="请选择单位" clearable>
+            <el-option
+              v-for="item in departmentOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="temp.email" />
+        </el-form-item>
+        <el-form-item label="角色" prop="userRole">
+          <el-select v-model="temp.userRole" placeholder="请选择角色">
+            <el-option label="普通用户" value="user" />
+            <el-option label="禁用" value="ban" />
+          </el-select>
+        </el-form-item>
+      </el-form>
         <el-form-item
           v-show="dialogStatus === 'update'"
           label="状态"
@@ -129,13 +132,8 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false"> 取消 </el-button>
         <el-button
           type="primary"
           @click="
@@ -147,10 +145,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog
-      :visible.sync="dialogPvVisible"
-      title="Reading statistics"
-    >
+    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table
         :data="pvData"
         border
@@ -158,23 +153,11 @@
         highlight-current-row
         style="width: 100%"
       >
-        <el-table-column
-          prop="key"
-          label="Channel"
-        />
-        <el-table-column
-          prop="pv"
-          label="Pv"
-        />
+        <el-table-column prop="key" label="Channel" />
+        <el-table-column prop="pv" label="Pv" />
       </el-table>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          type="primary"
-          @click="dialogPvVisible = false"
-        >{{
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogPvVisible = false">{{
           $t("table.confirm")
         }}</el-button>
       </span>
@@ -183,9 +166,9 @@
 </template>
 
 <script>
-import { fetchPv, createArticle, updateArticle } from "@/api/article";
-
-import { fetchList, deleteArticle } from "@/api/user";
+import { fetchPv, createArticle } from "@/api/article";
+import { fetchList as fetchListUnit } from "@/api/unit";
+import { fetchList, deleteArticle, updateArticle } from "@/api/user";
 import waves from "@/directive/waves"; // waves directive
 import { parseTime } from "@/utils";
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
@@ -214,9 +197,6 @@ export default {
       };
       return statusMap[status];
     },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type];
-    },
   },
   data() {
     return {
@@ -224,6 +204,7 @@ export default {
       list: [],
       total: 0,
       listLoading: true,
+      departmentOptions: [], // 新增部门选项数组
       listQuery: {
         page: 1,
         limit: 10,
@@ -242,6 +223,12 @@ export default {
       showReviewer: false,
       temp: {
         id: undefined,
+        username: '',
+        email: '',
+        userRole: 'user',
+        department: {
+          name: ''
+        },
         importance: 1,
         remark: "",
         timestamp: new Date(),
@@ -273,8 +260,14 @@ export default {
   },
   created() {
     this.getList();
+    this.getDepartments(); // 新增获取部门数据方法
   },
   methods: {
+
+    typeFilter(type) {
+      console.log(type, 'type');
+      return calendarTypeKeyValue[type];
+    },
     getList() {
       this.listLoading = true;
 
@@ -366,8 +359,10 @@ export default {
         if (valid) {
           updateArticle({
             id,
-            name: this.temp.name,
-            status: this.temp.status,
+            departmentId: this.temp.department.id,
+            email: this.temp.email,
+            userRole: this.temp.userRole,
+            username: this.temp.username,
           }).then(() => {
             this.getList();
             this.dialogFormVisible = false;
@@ -435,6 +430,12 @@ export default {
         path: "/complex-project",
         query: { id },
       });
+    },
+    getDepartments() {
+      fetchListUnit().then((res) => {
+        console.log(res, 'resres')
+      this.departmentOptions = res.data
+    });
     },
   },
 };

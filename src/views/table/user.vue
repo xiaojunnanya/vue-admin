@@ -10,25 +10,37 @@
       style="width: 100%"
       @sort-change="sortChange"
     >
-      <el-table-column label="用户名" min-width="150px">
+      <el-table-column
+        label="用户名"
+        min-width="150px"
+      >
         <template slot-scope="{ row }">
           <span class="link-type">{{ row.username }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="单位名称" width="200px">
+      <el-table-column
+        label="单位名称"
+        width="200px"
+      >
         <template slot-scope="{ row }">
           <span v-if="row.department">{{ row.department.name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="邮箱" width="200px">
+      <el-table-column
+        label="邮箱"
+        width="200px"
+      >
         <template slot-scope="{ row }">
           <span>{{ row.email }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="角色" width="200px">
+      <el-table-column
+        label="角色"
+        width="200px"
+      >
         <template slot-scope="{ row }">
           <span v-if="row.userRole === 'admin'">管理员</span>
           <span v-else>{{ row.userRole === 'user' ? '普通用户' : '禁用' }}</span>
@@ -54,15 +66,20 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)" :disabled="row.userRole === 'admin'">
+          <el-button
+            type="primary"
+            size="mini"
+            :disabled="row.userRole === 'admin'"
+            @click="handleUpdate(row)"
+          >
             编辑
           </el-button>
           <el-button
             v-if="row.status != 'deleted'"
             size="mini"
             type="danger"
+            :disabled="row.userRole === 'admin'"
             @click="handleDelete(row, $index)"
-             :disabled="row.userRole === 'admin'"
           >
             删除
           </el-button>
@@ -90,11 +107,21 @@
         label-width="100px"
         style="width: 400px; margin-left: 50px"
       >
-        <el-form-item label="用户名" prop="username">
+        <el-form-item
+          label="用户名"
+          prop="username"
+        >
           <el-input v-model="temp.username" />
         </el-form-item>
-        <el-form-item label="单位名称" prop="department">
-          <el-select v-model="temp.department.id" placeholder="请选择单位" clearable>
+        <el-form-item
+          label="单位名称"
+          prop="department"
+        >
+          <el-select
+            v-model="temp.department.id"
+            placeholder="请选择单位"
+            clearable
+          >
             <el-option
               v-for="item in departmentOptions"
               :key="item.id"
@@ -103,37 +130,57 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="邮箱" prop="email">
+        <el-form-item
+          label="邮箱"
+          prop="email"
+        >
           <el-input v-model="temp.email" />
         </el-form-item>
-        <el-form-item label="角色" prop="userRole">
-          <el-select v-model="temp.userRole" placeholder="请选择角色">
-            <el-option label="普通用户" value="user" />
-            <el-option label="禁用" value="ban" />
-          </el-select>
-        </el-form-item>
-      </el-form>
         <el-form-item
-          v-show="dialogStatus === 'update'"
-          label="状态"
-          prop="status"
+          label="角色"
+          prop="userRole"
         >
           <el-select
-            v-model="temp.status"
-            class="filter-item"
-            placeholder="请选择"
+            v-model="temp.userRole"
+            placeholder="请选择角色"
           >
             <el-option
-              v-for="item in calendarTypeOptions"
-              :key="item.key"
-              :label="item.display_name"
-              :value="item.key"
+              label="普通用户"
+              value="user"
+            />
+            <el-option
+              label="禁用"
+              value="ban"
             />
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false"> 取消 </el-button>
+      <el-form-item
+        v-show="dialogStatus === 'update'"
+        label="状态"
+        prop="status"
+      >
+        <el-select
+          v-model="temp.status"
+          class="filter-item"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in calendarTypeOptions"
+            :key="item.key"
+            :label="item.display_name"
+            :value="item.key"
+          />
+        </el-select>
+      </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogFormVisible = false">
+          取消
+        </el-button>
         <el-button
           type="primary"
           @click="
@@ -145,7 +192,10 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
+    <el-dialog
+      :visible.sync="dialogPvVisible"
+      title="Reading statistics"
+    >
       <el-table
         :data="pvData"
         border
@@ -153,11 +203,23 @@
         highlight-current-row
         style="width: 100%"
       >
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
+        <el-table-column
+          prop="key"
+          label="Channel"
+        />
+        <el-table-column
+          prop="pv"
+          label="Pv"
+        />
       </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="dialogPvVisible = false"
+        >{{
           $t("table.confirm")
         }}</el-button>
       </span>

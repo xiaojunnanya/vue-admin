@@ -29,7 +29,10 @@
         />
       </el-form-item>
 
-      <el-form-item prop="department" v-if="!isLogin">
+      <el-form-item
+        v-if="!isLogin"
+        prop="department"
+      >
         <span class="svg-container">
           <svg-icon icon-class="tree" />
         </span>
@@ -70,7 +73,10 @@
             @blur="capsTooltip = false"
             @keyup.enter.native="handleLogin"
           />
-          <span class="show-pwd" @click="showPwd">
+          <span
+            class="show-pwd"
+            @click="showPwd"
+          >
             <svg-icon
               :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
             />

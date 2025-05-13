@@ -15,7 +15,7 @@
         min-width="150px"
       >
         <template slot-scope="{ row }">
-          <span class="link-type">{{ row.username }}</span>
+          <span>{{ row.username }}</span>
         </template>
       </el-table-column>
 

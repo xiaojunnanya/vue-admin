@@ -60,3 +60,21 @@ export function fetchDetail(id) {
     params: { planId: id },
   });
 }
+
+// 新增考核项目
+export function addAssess(data) {
+  return request({
+    url: "/project/add",
+    method: "post",
+    data,
+  });
+}
+
+// 新增考核指标
+export function addAssessIndex(data) {
+  return request({
+    url: "/content/add",
+    method: "post",
+    data,
+  });
+}

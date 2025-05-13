@@ -23,7 +23,6 @@ export function getInfo(token) {
   return request({
     url: "/user/currentUser",
     method: "get",
-    params: { token },
   });
 }
 

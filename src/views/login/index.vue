@@ -29,10 +29,7 @@
         />
       </el-form-item>
 
-      <el-form-item
-        v-if="!isLogin"
-        prop="department"
-      >
+      <el-form-item v-if="!isLogin" prop="department">
         <span class="svg-container">
           <svg-icon icon-class="tree" />
         </span>
@@ -73,10 +70,7 @@
             @blur="capsTooltip = false"
             @keyup.enter.native="handleLogin"
           />
-          <span
-            class="show-pwd"
-            @click="showPwd"
-          >
+          <span class="show-pwd" @click="showPwd">
             <svg-icon
               :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
             />
@@ -103,12 +97,12 @@
         注册
       </el-button>
 
-      <div
+      <!-- <div
         style="float: right; color: #fff; fontsize: 12px; cursor: pointer"
         @click="isLogin = !isLogin"
       >
         {{ isLogin ? "没有账号？" : "已有账号？" }}
-      </div>
+      </div> -->
 
       <!-- <div>
 

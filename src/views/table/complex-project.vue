@@ -1,14 +1,22 @@
 <template>
   <div>
-    <div v-if="!data">loading...</div>
+    <div v-if="!data">
+      loading...
+    </div>
     <div v-else>
       <div class="button-group">
-        <el-button type="primary" @click="showAddProjectDialog"
-          >新增考核项目</el-button
+        <el-button
+          type="primary"
+          @click="showAddProjectDialog"
         >
-        <el-button type="primary" @click="showAddIndicatorDialog"
-          >新增考核指标</el-button
+          新增考核项目
+        </el-button>
+        <el-button
+          type="primary"
+          @click="showAddIndicatorDialog"
         >
+          新增考核指标
+        </el-button>
       </div>
       <div class="titleName">
         {{ data.name }}
@@ -19,12 +27,34 @@
         style="width: 100%"
         :span-method="mergeCells"
       >
-        <el-table-column prop="category" label="分类" width="80" />
-        <el-table-column prop="index" label="序号" width="60" />
-        <el-table-column prop="project" label="考核项目" width="200" />
-        <el-table-column prop="indicator" label="考核指标" />
-        <el-table-column prop="assessmentBasis" label="考核依据" />
-        <el-table-column prop="examineTime" label="考核时间" width="150" />
+        <el-table-column
+          prop="category"
+          label="分类"
+          width="80"
+        />
+        <el-table-column
+          prop="index"
+          label="序号"
+          width="60"
+        />
+        <el-table-column
+          prop="project"
+          label="考核项目"
+          width="200"
+        />
+        <el-table-column
+          prop="indicator"
+          label="考核指标"
+        />
+        <el-table-column
+          prop="assessmentBasis"
+          label="考核依据"
+        />
+        <el-table-column
+          prop="examineTime"
+          label="考核时间"
+          width="150"
+        />
         <el-table-column
           prop="examineDepartment"
           label="考核单位"
@@ -35,7 +65,10 @@
           label="监测单位"
           width="120"
         />
-        <el-table-column label="文件" width="100">
+        <el-table-column
+          label="文件"
+          width="100"
+        >
           <template #default="scope">
             <div v-if="scope.row.files && scope.row.files.length">
               <el-button
@@ -62,8 +95,14 @@
               v-model="newProjectForm.category"
               placeholder="请选择分类"
             >
-              <el-option label="基本指标" value="0"></el-option>
-              <el-option label="重点指标" value="1"></el-option>
+              <el-option
+                label="基本指标"
+                value="0"
+              />
+              <el-option
+                label="重点指标"
+                value="1"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="考核指标">
@@ -71,12 +110,18 @@
               v-model="newProjectForm.indicator"
               style="width: 300px"
               placeholder="请输入考核指标"
-            ></el-input>
+            />
           </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
           <el-button @click="addProjectDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitProjectForm">确定</el-button>
+          <el-button
+            type="primary"
+            @click="submitProjectForm"
+          >确定</el-button>
         </span>
       </el-dialog>
 
@@ -99,8 +144,7 @@
                 :key="item.id"
                 :label="item.project"
                 :value="item.id"
-              >
-              </el-option>
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="考核指标">
@@ -108,21 +152,21 @@
               v-model="newIndicatorForm.indicator"
               style="width: 300px"
               placeholder="请输入考核指标"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="考核依据">
             <el-input
               v-model="newIndicatorForm.assessmentBasis"
               style="width: 300px"
               placeholder="请输入考核依据"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="考核时间">
             <el-date-picker
               v-model="newIndicatorForm.examineTime"
               type="date"
               placeholder="选择日期"
-            ></el-date-picker>
+            />
           </el-form-item>
           <el-form-item label="考核单位">
             <el-select
@@ -134,7 +178,7 @@
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="监测单位">
@@ -147,15 +191,19 @@
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
           <el-button @click="addIndicatorDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitIndicatorForm"
-            >确定</el-button
-          >
+          <el-button
+            type="primary"
+            @click="submitIndicatorForm"
+          >确定</el-button>
         </span>
       </el-dialog>
     </div>

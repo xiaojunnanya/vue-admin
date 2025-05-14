@@ -1,5 +1,12 @@
 <template>
   <div class="app-container">
+    <el-button
+      type="primary"
+      style="margin-bottom: 20px;"
+      @click="handleCreate"
+    >
+      新增用户
+    </el-button>
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -100,6 +107,7 @@
       :visible.sync="dialogFormVisible"
     >
       <el-form
+        v-if="dialogFormVisible"
         ref="dataForm"
         :rules="rules"
         :model="temp"
@@ -108,10 +116,27 @@
         style="width: 400px; margin-left: 50px"
       >
         <el-form-item
+          v-if="dialogStatus === 'update'"
           label="用户名"
           prop="username"
         >
           <el-input v-model="temp.username" />
+        </el-form-item>
+        <el-form-item
+          label="邮箱"
+          prop="email"
+        >
+          <el-input v-model="temp.email" />
+        </el-form-item>
+        <el-form-item
+          v-if="dialogStatus === 'create'"
+          label="密码"
+          prop="password"
+        >
+          <el-input
+            v-model="temp.password"
+            type="password"
+          />
         </el-form-item>
         <el-form-item
           label="单位名称"
@@ -129,12 +154,6 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
-        <el-form-item
-          label="邮箱"
-          prop="email"
-        >
-          <el-input v-model="temp.email" />
         </el-form-item>
         <el-form-item
           label="角色"
@@ -228,9 +247,9 @@
 </template>
 
 <script>
-import { fetchPv, createArticle } from "@/api/article";
+import { fetchPv } from "@/api/article";
 import { fetchList as fetchListUnit } from "@/api/unit";
-import { fetchList, deleteArticle, updateArticle } from "@/api/user";
+import { fetchList, deleteArticle, updateArticle, addArticle } from "@/api/user";
 import waves from "@/directive/waves"; // waves directive
 import { parseTime } from "@/utils";
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
@@ -287,8 +306,10 @@ export default {
         id: undefined,
         username: '',
         email: '',
+        password: '',
         userRole: 'user',
         department: {
+          id: '',
           name: ''
         },
         importance: 1,
@@ -307,6 +328,18 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
+        email: [
+          { required: true, message: "请填写邮箱", trigger: "blur" },
+        ],
+        password: [
+          { required: true, message: "请填写密码", trigger: "blur" },
+        ],
+        department: [
+          { required: true, message: "请选择单位", trigger: "change" }
+        ],
+        username: [
+          { required: true, message: "请填写用户名", trigger: "blur" }
+        ],
         timestamp: [
           {
             type: "date",
@@ -373,12 +406,20 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        // importance: 1,
-        // remark: "",
-        // timestamp: new Date(),
+        username: '',
+        email: '',
+        password: '',
+        userRole: 'user',
+        department: {
+          id: '',
+          name: ''
+        },
+        importance: 1,
+        remark: "",
+        timestamp: new Date(),
         name: "",
+        type: "",
         status: 0,
-        // type: "",
       };
     },
     handleCreate() {
@@ -392,8 +433,13 @@ export default {
     createData() {
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
-          createArticle({
-            name: this.temp.name,
+          // 打印表单值
+          console.log('新增用户表单数据:', this.temp);
+          addArticle({
+            email: this.temp.email,
+            departmentId: this.temp.department.id,
+            password: this.temp.password,
+            checkPassword: this.temp.password,
           }).then(() => {
             this.getList();
             this.dialogFormVisible = false;
@@ -404,6 +450,7 @@ export default {
               duration: 2000,
             });
           });
+          this.dialogFormVisible = false;
         }
       });
     },

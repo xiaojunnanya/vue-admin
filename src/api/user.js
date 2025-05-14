@@ -57,3 +57,12 @@ export function updateArticle(data) {
     data,
   });
 }
+
+// 新增用户
+export function addArticle(data) {
+  return request({
+    url: "/user/add",
+    method: "post",
+    data,
+  });
+}

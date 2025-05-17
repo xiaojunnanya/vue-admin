@@ -1,12 +1,23 @@
 <template>
   <div>
-    <div v-if="!data">loading...</div>
+    <div v-if="!data">
+      loading...
+    </div>
     <div v-else>
-      <div class="button-group" v-show="user_info.userRole === 'admin'">
-        <el-button type="primary" @click="showAddProjectDialog">
+      <div
+        v-show="user_info.userRole === 'admin'"
+        class="button-group"
+      >
+        <el-button
+          type="primary"
+          @click="showAddProjectDialog"
+        >
           新增考核项目
         </el-button>
-        <el-button type="primary" @click="showAddIndicatorDialog">
+        <el-button
+          type="primary"
+          @click="showAddIndicatorDialog"
+        >
           新增考核指标
         </el-button>
       </div>
@@ -19,12 +30,34 @@
         style="width: 100%"
         :span-method="mergeCells"
       >
-        <el-table-column prop="category" label="分类" width="80" />
-        <el-table-column prop="index" label="序号" width="60" />
-        <el-table-column prop="project" label="考核项目" width="200" />
-        <el-table-column prop="indicator" label="考核指标" />
-        <el-table-column prop="assessmentBasis" label="考核依据" />
-        <el-table-column prop="examineTime" label="考核时间" width="150" />
+        <el-table-column
+          prop="category"
+          label="分类"
+          width="80"
+        />
+        <el-table-column
+          prop="index"
+          label="序号"
+          width="60"
+        />
+        <el-table-column
+          prop="project"
+          label="考核项目"
+          width="200"
+        />
+        <el-table-column
+          prop="indicator"
+          label="考核指标"
+        />
+        <el-table-column
+          prop="assessmentBasis"
+          label="考核依据"
+        />
+        <el-table-column
+          prop="examineTime"
+          label="考核时间"
+          width="150"
+        />
         <el-table-column
           prop="examineDepartment"
           label="考核单位"
@@ -35,7 +68,10 @@
           label="监测单位"
           width="120"
         />
-        <el-table-column label="文件" width="100">
+        <el-table-column
+          label="文件"
+          width="100"
+        >
           <template #default="scope">
             <div v-if="scope.row.files && scope.row.files.length">
               <el-button
@@ -62,8 +98,14 @@
               v-model="newProjectForm.category"
               placeholder="请选择分类"
             >
-              <el-option label="基本指标" value="0" />
-              <el-option label="重点指标" value="1" />
+              <el-option
+                label="基本指标"
+                value="0"
+              />
+              <el-option
+                label="重点指标"
+                value="1"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="考核指标">
@@ -74,9 +116,15 @@
             />
           </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
           <el-button @click="addProjectDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitProjectForm">确定</el-button>
+          <el-button
+            type="primary"
+            @click="submitProjectForm"
+          >确定</el-button>
         </span>
       </el-dialog>
 
@@ -150,11 +198,15 @@
             </el-select>
           </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
           <el-button @click="addIndicatorDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitIndicatorForm"
-            >确定</el-button
-          >
+          <el-button
+            type="primary"
+            @click="submitIndicatorForm"
+          >确定</el-button>
         </span>
       </el-dialog>
     </div>

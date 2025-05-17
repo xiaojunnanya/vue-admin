@@ -51,6 +51,7 @@ export const asyncRoutes = [
   {
     path: "/",
     component: Layout,
+    name: "ComplexTable",
     meta: {
       icon: "table",
     },
@@ -66,6 +67,39 @@ export const asyncRoutes = [
   {
     path: "/",
     component: Layout,
+    name: "task",
+    meta: {
+      icon: "component",
+    },
+    children: [
+      {
+        path: "task",
+        component: () => import("@/views/table/task"),
+        name: "task",
+        meta: { title: "我的任务" },
+      },
+    ],
+  },
+  {
+    path: "/",
+    component: Layout,
+    name: "approve",
+    meta: {
+      icon: "component",
+    },
+    children: [
+      {
+        path: "approve",
+        component: () => import("@/views/table/approve"),
+        name: "approve",
+        meta: { title: "我的审批" },
+      },
+    ],
+  },
+  {
+    path: "/",
+    component: Layout,
+    name: "ComplexProject",
     meta: {
       icon: "table",
     },
@@ -81,6 +115,7 @@ export const asyncRoutes = [
   {
     path: "/",
     component: Layout,
+    name: "unit",
     meta: {
       icon: "table",
     },
@@ -96,6 +131,7 @@ export const asyncRoutes = [
   {
     path: "/",
     component: Layout,
+    name: "ranking",
     meta: {
       icon: "chart",
     },
@@ -111,6 +147,7 @@ export const asyncRoutes = [
   {
     path: "/",
     component: Layout,
+    name: "user",
     meta: {
       icon: "peoples",
     },
@@ -126,6 +163,7 @@ export const asyncRoutes = [
   {
     path: "/",
     component: Layout,
+    name: "setting",
     meta: {
       icon: "component",
     },

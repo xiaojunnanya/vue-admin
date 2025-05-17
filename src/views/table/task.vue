@@ -74,7 +74,7 @@
           <span>{{ row.updateTime }}</span>
         </template>
       </el-table-column>
-
+      <!--
       <el-table-column
         :label="$t('table.actions')"
         align="center"
@@ -94,7 +94,7 @@
             删除
           </el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
 
     <pagination
@@ -179,7 +179,7 @@ import {
   createArticle,
   updateArticle,
   deleteArticle,
-} from "@/api/article";
+} from "@/api/task";
 import waves from "@/directive/waves"; // waves directive
 import { parseTime } from "@/utils";
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
@@ -272,16 +272,10 @@ export default {
     getList() {
       this.listLoading = true;
 
-      fetchList({
-        name: this.listQuery.name,
-        current: this.listQuery.page,
-        pageSize: this.listQuery.limit,
-        sortOrder: "desc",
-        sortField: "createTime",
-      }).then((response) => {
-        this.list = response.data.records;
+      fetchList().then((response) => {
+        this.list = response.data;
 
-        this.total = Number(response.data.total);
+        this.total = Number(response.data.length);
 
         this.listLoading = false;
       });

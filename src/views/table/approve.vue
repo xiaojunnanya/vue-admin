@@ -82,16 +82,11 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
+          <el-button type="primary" size="mini" @click="handleApprove(row, 1)">
+            通过
           </el-button>
-          <el-button
-            v-if="row.status != 'deleted'"
-            size="mini"
-            type="danger"
-            @click="handleDelete(row, $index)"
-          >
-            删除
+          <el-button size="mini" type="danger" @click="handleApprove(row, 3)">
+            拒绝
           </el-button>
         </template>
       </el-table-column>
@@ -179,7 +174,8 @@ import {
   createArticle,
   updateArticle,
   deleteArticle,
-} from "@/api/article";
+} from "@/api/approve";
+import { approveApi } from "@/api/approve";
 import waves from "@/directive/waves"; // waves directive
 import { parseTime } from "@/utils";
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
@@ -272,16 +268,10 @@ export default {
     getList() {
       this.listLoading = true;
 
-      fetchList({
-        name: this.listQuery.name,
-        current: this.listQuery.page,
-        pageSize: this.listQuery.limit,
-        sortOrder: "desc",
-        sortField: "createTime",
-      }).then((response) => {
-        this.list = response.data.records;
+      fetchList().then((response) => {
+        this.list = response.data;
 
-        this.total = Number(response.data.total);
+        this.total = Number(response.data.length);
 
         this.listLoading = false;
       });
@@ -346,6 +336,14 @@ export default {
             });
           });
         }
+      });
+    },
+    handleApprove(row, status) {
+      approveApi({
+        contentId: row.id,
+        status,
+      }).then((res) => {
+        console.log(res);
       });
     },
     handleUpdate(row) {
